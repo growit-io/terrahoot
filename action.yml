@@ -1,0 +1,6 @@
+name: Terrahoot Action
+description: Opinionated wrapper for Terragrunt runs in CI/CD workflows
+
+runs:
+  using: docker
+  image: Dockerfile
