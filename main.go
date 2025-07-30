@@ -1,5 +1,9 @@
 package main
 
+import (
+	"github.com/growit-io/terrahoot/cmd"
+)
+
 func main() {
-	println("Hi there!")
+	cmd.Execute()
 }
