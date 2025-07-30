@@ -17,6 +17,7 @@ require (
 	github.com/agext/levenshtein v1.2.1 // indirect
 	github.com/apparentlymart/go-textseg/v15 v15.0.0 // indirect
 	github.com/mitchellh/go-wordwrap v1.0.1 // indirect
+	github.com/sethvargo/go-githubactions v1.3.1
 	github.com/stretchr/testify v1.10.0
 	github.com/zclconf/go-cty v1.16.3 // indirect
 	golang.org/x/mod v0.17.0 // indirect

@@ -15,7 +15,7 @@ func init() {
 
 var runCmd = &cobra.Command{
 	Use:   "run",
-	Short: "Run Terragrunt only on configurations affected by changed files",
+	Short: "Run a command in Terragrunt units affected by changed files",
 
 	RunE: func(cmd *cobra.Command, args []string) error {
 		git := internal.Git{}
