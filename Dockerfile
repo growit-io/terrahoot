@@ -15,10 +15,6 @@ FROM alpine@sha256:4bcff63911fcb4448bd4fdacec207030997caf25e9bea4045fa6c8c44de31
 
 RUN apk add --no-cache bash curl git
 
-COPY --from=builder --chown=0:0 /bin/app /usr/local/bin/terrahoot
-
-RUN adduser -u 1000 -h /home/user -D user user
-
 RUN git clone --depth=1 --branch v3.0.0 https://github.com/tfutils/tfenv.git /home/user/tfenv
 RUN ln -s /home/user/tfenv/bin/* /usr/local/bin
 COPY .terraform-version /home/user/tfenv/version
@@ -29,7 +25,6 @@ RUN ln -s /home/user/tgenv/bin/* /usr/local/bin
 #COPY .terragrunt-version /home/user/tgenv/version
 COPY .terragrunt-version /home/user/.terragrunt-version
 
-RUN chown -R user: /home/user
-USER user
+COPY --from=builder --chown=0:0 /bin/app /usr/local/bin/terrahoot
 
 ENTRYPOINT ["/usr/local/bin/terrahoot"]
