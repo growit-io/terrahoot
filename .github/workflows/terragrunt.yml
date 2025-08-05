@@ -37,7 +37,7 @@ env:
 
 jobs:
   plan:
-    name: Plan
+    name: Plan 
     # Only while the pull request is still open.
     if: github.event.pull_request.state == 'open'
     runs-on: ubuntu-latest
@@ -56,17 +56,14 @@ jobs:
           path: ${{ env.cache-path }}
           key: ${{ env.cache-key }}
           restore-keys: ${{ env.cache-restore-keys }}
-      - name: List changed files (for debugging)
+      - name: Setup Terrahoot
         if: steps.cache.outputs.cache-hit != 'true'
-        uses: ./
+        uses: ./.github/actions/setup-terrahoot
         with:
-          command: changed-files
-      - name: Create execution plans
+          terrahoot_version: ${{ github.event.pull_request.head.sha }}
+      - name: Run Terrahoot
         if: steps.cache.outputs.cache-hit != 'true'
-        uses: ./
-        with:
-          command: run
-          arguments: -- --all -- plan
+        run: terrahoot --debug
       - name: Save cache
         if: steps.cache.outputs.cache-hit != 'true'
         uses: actions/cache/save@5a3ec84eff668545956fd18022155c47e93e2684 # v4

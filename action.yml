@@ -5,8 +5,10 @@ inputs:
   command:
     description: |
       Command to pass to the "terrahoot" executable as the first command-line
-      argument.
-    required: true
+      argument. The command will be wrapped in single quotes to avoid shell
+      interpretation.
+    required: false
+    default: ""
   args:
     description: |
       Optional additional command-line arguments to pass to the "terrahoot"
@@ -23,4 +25,12 @@ runs:
     - |
       git config --global --add safe.directory "${GITHUB_WORKSPACE:?}"
 
-      terrahoot '${{ inputs.command }}' ${{ inputs.args }}
+      if [[ -n '${{ inputs.command }}' ]]; then
+        set -- '${{ inputs.command }}'
+      else
+        set --
+      fi
+
+      set -- "$@" ${{ inputs.args }}
+
+      terrahoot "$@"

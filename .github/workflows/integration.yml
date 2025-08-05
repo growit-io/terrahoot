@@ -12,7 +12,3 @@ jobs:
       - uses: actions/checkout@11bd71901bbe5b1630ceea73d27597364c9af683 # v4
       - uses: actions/setup-go@d35c59abb061a4a6fb18e82ac0862c26744d6ab5 # v5
       - run: go test ./...
-      # Run tests against the latest published Docker image.
-      - uses: docker://ghcr.io/growit-io/terrahoot:latest
-      # Build and test the Docker image on the current branch.
-      - uses: ./

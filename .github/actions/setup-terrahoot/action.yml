@@ -40,6 +40,8 @@ runs:
 
     - name: Setup Go
       uses: actions/setup-go@v5.5.0
+      with:
+        go-version-file: go.mod
 
     - name: Install terrahoot@${{ inputs.terrahoot_version }}
       shell: bash

@@ -1,6 +1,7 @@
+package terraform
+
 // Based on: https://github.com/mixpanel/terraform-deps
 // FIXME: attribution for terraform-deps
-package internal
 
 import (
 	"fmt"

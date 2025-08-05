@@ -1,3 +1,3 @@
-output "world" {
-  value = random_pet.this.id
+output "greeting" {
+  value = "Hello, ${var.world_name}!"
 }
