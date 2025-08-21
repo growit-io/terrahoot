@@ -1,15 +1,7 @@
-dependency "world" {
-  config_path = "../world"
-
-  #mock_outputs = {
-  #  name = "Dummy"
-  #}
-}
-
 locals {
   root_dir = get_repo_root()
 
-  terraform_source = "${local.root_dir}/examples/terraform/hello"
+  terraform_source = "${local.root_dir}/examples/terraform/world"
 
   __terraform_source_files = [
     for file in split("\n", run_cmd(
@@ -19,6 +11,7 @@ locals {
       local.terraform_source == "" ? "." : local.terraform_source
     )) : mark_as_read(file)
   ]
+
 
   __tool_version_files = [
     for file in [
@@ -30,8 +23,4 @@ locals {
 
 terraform {
   source = local.terraform_source
-}
-
-inputs = {
-  world_name = dependency.world.outputs.name
 }

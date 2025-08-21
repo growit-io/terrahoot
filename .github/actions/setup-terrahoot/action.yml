@@ -1,0 +1,49 @@
+name: Setup Terrahoot
+description: >
+  Installs the Terrahoot CLI as well as its dependencies tgenv and tfenv.
+
+inputs:
+  terrahoot_version:
+    description: >
+      Existing tag, branch name, or commit reference in the Terrahoot project
+      source repository.
+    default: HEAD
+  tgenv_version:
+    description: >
+      Existing tag, branch name, or commit reference in the tgenv project source
+      repository.
+    default: v1.2.1
+  tfenv_version:
+    description: >
+      Existing tag, branch name, or commit reference in the tfenv project source
+      repository.
+    default: v3.0.0
+
+runs:
+  using: composite
+  steps:
+    - name: Set git config variable advice.detachedHead to false
+      shell: bash
+      run: git config --global advice.detachedHead false
+
+    - name: Install tfenv@${{ inputs.tfenv_version }}
+      shell: bash
+      run: |
+        git clone --quiet --depth=1 --branch "${{ inputs.tfenv_version }}" https://github.com/tfutils/tfenv.git "${RUNNER_TEMP:?}/tfenv"
+        echo "$RUNNER_TEMP/tfenv/bin" >> "$GITHUB_PATH"
+
+    - name: Install tgenv@${{ inputs.tgenv_version }}
+      shell: bash
+      run: |
+        git clone --quiet --depth=1 --branch "${{ inputs.tgenv_version }}" https://github.com/tgenv/tgenv.git "${RUNNER_TEMP:?}/tgenv"
+        echo "$RUNNER_TEMP/tgenv/bin" >> "$GITHUB_PATH"
+
+    - name: Setup Go
+      uses: actions/setup-go@v5.5.0
+      with:
+        go-version-file: go.mod
+
+    - name: Install terrahoot@${{ inputs.terrahoot_version }}
+      shell: bash
+      run: |
+        go install github.com/growit-io/terrahoot@${{ inputs.terrahoot_version }}

@@ -1,0 +1,72 @@
+name: Terragrunt
+
+on:
+  pull_request:
+    types:
+      - opened
+      - reopened
+      - synchronize
+      - edited
+      - closed
+    branches:
+      - main
+
+concurrency:
+  group: ${{ github.workflow }}
+  cancel-in-progress: false
+
+env:
+  TERRAGRUNT_FLAGS: --non-interactive
+  TG_JSON_OUT_DIR: .terragrunt-out
+  TG_PARALLELISM: '10'
+
+  # The SHA of the HEAD commit on the base branch. This is the reference tree
+  # for computing the list of changed files on the pull request branch.
+  GIT_BASE_REF: ${{ github.event.pull_request.base.sha }}
+
+  # The SHA of the HEAD commit on the pull request branch. Note that we don't
+  # use the automatic merge commit reference created by GitHub.
+  GIT_HEAD_SHA: ${{ github.event.pull_request.head.sha }}
+
+  cache-key: terragrunt-plan-${{ github.event.pull_request.head.sha }}
+  cache-restore-keys: |
+    terragrunt-plan-
+  # FIXME: at least Terraform and Terragrunt executables should be cached
+  cache-path: |
+    .terragrunt/src/main
+
+jobs:
+  plan:
+    name: Plan 
+    # Only while the pull request is still open.
+    if: github.event.pull_request.state == 'open'
+    runs-on: ubuntu-latest
+    steps:
+      - name: Checkout
+        if: steps.cache.outputs.cache-hit != 'true'
+        uses: actions/checkout@11bd71901bbe5b1630ceea73d27597364c9af683 # v4
+        with:
+          ref: ${{ github.event.pull_request.head.sha }}
+          fetch-depth: 0
+          show-progress: false
+      - name: Restore cache
+        id: cache
+        uses: actions/cache/restore@5a3ec84eff668545956fd18022155c47e93e2684 # v4
+        with:
+          path: ${{ env.cache-path }}
+          key: ${{ env.cache-key }}
+          restore-keys: ${{ env.cache-restore-keys }}
+      - name: Setup Terrahoot
+        if: steps.cache.outputs.cache-hit != 'true'
+        uses: ./.github/actions/setup-terrahoot
+        with:
+          terrahoot_version: ${{ github.event.pull_request.head.sha }}
+      - name: Run Terrahoot
+        if: steps.cache.outputs.cache-hit != 'true'
+        run: terrahoot --debug
+      - name: Save cache
+        if: steps.cache.outputs.cache-hit != 'true'
+        uses: actions/cache/save@5a3ec84eff668545956fd18022155c47e93e2684 # v4
+        with:
+          path: ${{ env.cache-path }}
+          key: ${{ env.cache-key }}

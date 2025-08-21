@@ -1,6 +1,36 @@
 name: Terrahoot Action
 description: Opinionated wrapper for Terragrunt runs in CI/CD workflows
 
+inputs:
+  command:
+    description: |
+      Command to pass to the "terrahoot" executable as the first command-line
+      argument. The command will be wrapped in single quotes to avoid shell
+      interpretation.
+    required: false
+    default: ""
+  args:
+    description: |
+      Optional additional command-line arguments to pass to the "terrahoot"
+      executable after the command, evaluated using Bash. 
+    default: ""
+
 runs:
   using: docker
   image: Dockerfile
+  entrypoint: /bin/bash
+  args:
+    - -e
+    - -c
+    - |
+      git config --global --add safe.directory "${GITHUB_WORKSPACE:?}"
+
+      if [[ -n '${{ inputs.command }}' ]]; then
+        set -- '${{ inputs.command }}'
+      else
+        set --
+      fi
+
+      set -- "$@" ${{ inputs.args }}
+
+      terrahoot "$@"

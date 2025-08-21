@@ -1,11 +1,8 @@
 package cmd
 
 import (
-	"os"
-	"os/exec"
-	"path/filepath"
-
-	"github.com/growit-io/terrahoot/internal"
+	"github.com/growit-io/terrahoot/internal/terragrunt"
+	"github.com/growit-io/terrahoot/internal/workflow"
 	"github.com/spf13/cobra"
 )
 
@@ -14,32 +11,19 @@ func init() {
 }
 
 var runCmd = &cobra.Command{
-	Use:   "run",
-	Short: "Run Terragrunt only on configurations affected by changed files",
+	Use:    "run",
+	Short:  "Run a command in Terragrunt units affected by changed files",
+	Args:   cobra.ExactArgs(1),
+	Hidden: true,
 
 	RunE: func(cmd *cobra.Command, args []string) error {
-		git := internal.Git{}
-		baseRef := "" // TODO: look up base ref in environment variable
-
-		changedFiles, err := git.ChangedFiles(baseRef)
+		command, err := terragrunt.ParsePhase(args[0])
 		if err != nil {
 			return err
 		}
 
-		terragruntArgs := []string{"run", "--queue-strict-include"}
-		for _, f := range changedFiles {
-			if filepath.Base(f) == "terragrunt.hcl" {
-				terragruntArgs = append(terragruntArgs, "--queue-include-dir", filepath.Dir(f))
-			} else {
-				terragruntArgs = append(terragruntArgs, "--queue-include-units-reading", f)
-			}
-		}
+		cmd.SilenceUsage = true
 
-		terragruntArgs = append(terragruntArgs, args...)
-		terragruntCmd := exec.Command("terragrunt", terragruntArgs...)
-		terragruntCmd.Stdin = os.Stdin
-		terragruntCmd.Stdout = os.Stdout
-		terragruntCmd.Stderr = os.Stderr
-		return terragruntCmd.Run()
+		return workflow.Run(command)
 	},
 }

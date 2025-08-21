@@ -4,7 +4,7 @@ import (
 	"fmt"
 	"log"
 
-	"github.com/growit-io/terrahoot/internal"
+	"github.com/growit-io/terrahoot/internal/terraform"
 	"github.com/spf13/cobra"
 )
 
@@ -13,14 +13,15 @@ func init() {
 }
 
 var moduleFilesCmd = &cobra.Command{
-	Use:   "module-files",
-	Short: "List all source files of a Terraform module",
-	Long:  "Takes the directory of a Terragrunt module as the first and only argument.",
+	Use:    "module-files",
+	Short:  "List all source files of a Terraform module",
+	Long:   "Takes the directory of a Terragrunt module as the first and only argument.",
+	Hidden: true,
 
 	Run: func(cmd *cobra.Command, args []string) {
 		path := args[0]
 
-		p := internal.ModuleParser{
+		p := terraform.ModuleParser{
 			Dir: path,
 		}
 
@@ -36,7 +37,7 @@ var moduleFilesCmd = &cobra.Command{
 	},
 }
 
-func printTFFiles(m *internal.ModuleInfo) error {
+func printTFFiles(m *terraform.ModuleInfo) error {
 	for _, path := range m.TFFiles {
 		fmt.Println(path)
 	}

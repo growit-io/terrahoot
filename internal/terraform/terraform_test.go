@@ -1,9 +1,9 @@
-package internal_test
+package terraform_test
 
 import (
 	"testing"
 
-	"github.com/growit-io/terrahoot/internal"
+	internal "github.com/growit-io/terrahoot/internal/terraform"
 	"github.com/stretchr/testify/assert"
 )
 

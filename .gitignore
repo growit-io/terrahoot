@@ -1,3 +1,6 @@
+# Created by Terrahoot
+/.terrahoot/
+
 # Created by Terragrunt
 .terragrunt-cache/
 
