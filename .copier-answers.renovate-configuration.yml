@@ -5,3 +5,5 @@ automerge_non_major: true
 path_semantic_commit_type: ''
 renovate_configuration_file: .renovaterc
 use_semantic_prefix_fix_for_deps_chore_others_preset: true
+
+#copier updated
